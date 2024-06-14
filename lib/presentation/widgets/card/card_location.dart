@@ -9,6 +9,7 @@ class CardLocation extends StatefulWidget {
   final String description;
   final DataLonLatDate dataCoordinate;
   final Function onTap;
+  final bool statusButton;
 
   const CardLocation({
     super.key,
@@ -16,6 +17,7 @@ class CardLocation extends StatefulWidget {
     required this.description,
     required this.dataCoordinate,
     required this.onTap,
+    required this.statusButton,
   });
 
   @override
@@ -86,21 +88,21 @@ class _CardLocationState extends State<CardLocation> {
           wrapUi('Duration: ', widget.dataCoordinate.durationInSec.toString()),
           wrapUi('Akurasi: ', widget.dataCoordinate.accuracy.toString()),
           InkWell(
-            onTap: () => widget.onTap(),
+            onTap: () => widget.statusButton ? widget.onTap() : () {},
             child: Align(
               alignment: Alignment.center,
               child: Container(
                 margin: const EdgeInsets.only(top: 10),
                 padding: const EdgeInsets.all(5),
                 width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(
+                decoration: BoxDecoration(
+                  color: widget.statusButton ? Colors.white : Colors.grey,
+                  borderRadius: const BorderRadius.all(
                     Radius.circular(5.0),
                   ),
                 ),
                 child: TextB12Black(
-                  text: 'Get Coordinate',
+                  text: 'Get Coordinate ${widget.statusButton}',
                   color: Colors.blue,
                   align: TextAlign.center,
                 ),
