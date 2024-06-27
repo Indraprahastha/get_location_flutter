@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class GetCoordinateProvider with ChangeNotifier {
   DataLonLatDate _dataGeolocationV1 = DataLonLatDate();
   DataLonLatDate _dataGPSOnly = DataLonLatDate();
+  DataLonLatDate _dataAGPSOnly = DataLonLatDate();
   bool _statusButton = true;
   String _dataTimeStart = '';
   String _dataTimeEnd = '';
@@ -27,6 +28,10 @@ class GetCoordinateProvider with ChangeNotifier {
 
   DataLonLatDate get dataGPSOnly {
     return _dataGPSOnly;
+  }
+
+  DataLonLatDate get dataAGPSOnly {
+    return _dataAGPSOnly;
   }
 
   void toast(String msg) {
@@ -45,16 +50,26 @@ class GetCoordinateProvider with ChangeNotifier {
     try {
       var dataGeolocationStp1 = prefs.getString('dataGeolocationStp1') ?? '';
       var dataGPSOnly = prefs.getString('dataGPSOnly') ?? '';
+      var dataAGPSOnly = prefs.getString('dataAGPSOnly') ?? '';
 
       if (dataGeolocationStp1.isNotEmpty) {
         var decodeDataGeolocationStp1 = jsonDecode(dataGeolocationStp1);
-        _dataGeolocationV1 = DataLonLatDate.fromJson(decodeDataGeolocationStp1);
+        _dataGeolocationV1 = DataLonLatDate.fromJson(
+            decodeDataGeolocationStp1[decodeDataGeolocationStp1.length - 1]);
         // notifyListeners();
       }
 
       if (dataGPSOnly.isNotEmpty) {
         var decodeDataGPSOnly = jsonDecode(dataGPSOnly);
-        _dataGPSOnly = DataLonLatDate.fromJson(decodeDataGPSOnly);
+        _dataGPSOnly = DataLonLatDate.fromJson(
+            decodeDataGPSOnly[decodeDataGPSOnly.length - 1]);
+        // notifyListeners();
+      }
+
+      if (dataAGPSOnly.isNotEmpty) {
+        var decodeDataAGPSOnly = jsonDecode(dataAGPSOnly);
+        _dataAGPSOnly = DataLonLatDate.fromJson(
+            decodeDataAGPSOnly[decodeDataAGPSOnly.length - 1]);
         // notifyListeners();
       }
 
@@ -72,6 +87,11 @@ class GetCoordinateProvider with ChangeNotifier {
     _statusButton = false;
     notifyListeners();
     try {
+      var dataGeolocationStp1 = prefs.getString('dataGeolocationStp1') ?? '';
+      List<dynamic> dataGeolocationStp1Parse = dataGeolocationStp1.isNotEmpty
+          ? json.decode(dataGeolocationStp1)
+          : [];
+
       // ! Get location
       log('Get location');
       Position position = await Geolocator.getCurrentPosition(
@@ -84,18 +104,19 @@ class GetCoordinateProvider with ChangeNotifier {
       _duration = end.difference(start).inSeconds;
       // ! Mapping Date Time & Duration
       log('Mapping data to Model');
-      var dataToJson = DataLonLatDate(
+      DataLonLatDate dataToJson = DataLonLatDate(
         lat: position.latitude,
         lon: position.longitude,
         dateTime: 'start: $_dataTimeStart - end: $_dataTimeEnd',
         durationInSec: _duration,
         accuracy: position.accuracy,
-      ).toJson();
+      );
+      dataGeolocationStp1Parse.add(dataToJson);
       // ! Set to local storage
       log('Set to local storage');
       prefs.setString(
         'dataGeolocationStp1',
-        jsonEncode(dataToJson),
+        jsonEncode(dataGeolocationStp1Parse),
       );
       // ! Get Data
       log('Get Data');
@@ -122,6 +143,13 @@ class GetCoordinateProvider with ChangeNotifier {
     notifyListeners();
 
     try {
+      var dataGPSOnly = prefs.getString('dataGPSOnly') ?? '';
+      var dataAGPSOnly = prefs.getString('dataAGPSOnly') ?? '';
+      List<dynamic> dataGPSOnlyParse =
+          dataGPSOnly.isNotEmpty ? json.decode(dataGPSOnly) : [];
+      List<dynamic> dataAGPSOnlyParse =
+          dataAGPSOnly.isNotEmpty ? json.decode(dataAGPSOnly) : [];
+
       // final String result = await platform.invokeMethod(ind);
       final coordinates = await channel.invokeMethod(ind);
 
@@ -130,17 +158,25 @@ class GetCoordinateProvider with ChangeNotifier {
       var end = DateTime.parse(_dataTimeEnd);
       _duration = end.difference(start).inSeconds;
 
-      var dataToJson = DataLonLatDate(
+      DataLonLatDate dataToJson = DataLonLatDate(
         lat: coordinates["latitude"],
         lon: coordinates["longitude"],
         dateTime: 'start: $_dataTimeStart - end: $_dataTimeEnd',
         durationInSec: _duration,
         accuracy: coordinates["accuracy"],
-      ).toJson();
+      );
+
+      if (ind == 'getCoordinatesGPSOnly') {
+        dataGPSOnlyParse.add(dataToJson);
+      } else if (ind == 'getCoordinatesAGPSOnly') {
+        dataAGPSOnlyParse.add(dataToJson);
+      }
 
       prefs.setString(
-        'dataGPSOnly',
-        jsonEncode(dataToJson),
+        ind == 'getCoordinatesGPSOnly' ? 'dataGPSOnly' : 'dataAGPSOnly',
+        ind == 'getCoordinatesGPSOnly'
+            ? jsonEncode(dataGPSOnlyParse)
+            : jsonEncode(dataAGPSOnlyParse),
       );
 
       checkFirst();
@@ -154,5 +190,9 @@ class GetCoordinateProvider with ChangeNotifier {
       _statusButton = true;
       notifyListeners();
     }
+  }
+
+  void getDataList() async {
+    try {} catch (e) {}
   }
 }

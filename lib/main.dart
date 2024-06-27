@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get_location/presentation/providers/get_coordinate_provider.dart';
 import 'package:get_location/presentation/screens/home.dart';
 import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
 void main() {
   runApp(const MyApp());
@@ -76,10 +77,14 @@ class _MyHomePageState extends State<MyHomePage> {
           create: (context) => GetCoordinateProvider(),
         ),
       ],
-      child: const SafeArea(
-        child: Scaffold(
-          body: Home(),
+      child: GetMaterialApp(
+        theme: ThemeData(
+          fontFamily: 'Sen-Regular',
         ),
+        home: const SafeArea(
+          child: Home(),
+        ),
+        builder: EasyLoading.init(),
       ),
     );
   }

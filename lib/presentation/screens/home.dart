@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get_location/presentation/providers/get_coordinate_provider.dart';
+import 'package:get_location/presentation/screens/collect_data_page.dart';
 import 'package:get_location/presentation/widgets/card/card_location.dart';
 import 'package:provider/provider.dart';
 
@@ -40,6 +41,13 @@ class _HomeState extends State<Home> {
           dataCoordinate: getCoordinate.dataGeolocationV1,
           onTap: () => getCoordinate.getGeolocationStp1(),
           statusButton: getCoordinate.statusButton,
+          onTapGoToNav: () async {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const CollectDataPage(),
+              ),
+            );
+          },
         ),
         CardLocation(
           librarry: 'Native GPS Only',
@@ -47,6 +55,27 @@ class _HomeState extends State<Home> {
           dataCoordinate: getCoordinate.dataGPSOnly,
           onTap: () => getCoordinate.briggingToNative('getCoordinatesGPSOnly'),
           statusButton: getCoordinate.statusButton,
+          onTapGoToNav: () async {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const CollectDataPage(),
+              ),
+            );
+          },
+        ),
+        CardLocation(
+          librarry: 'Native AGPS Only',
+          description: 'Briging Native Function for get coordinate AGPS Only',
+          dataCoordinate: getCoordinate.dataAGPSOnly,
+          onTap: () => getCoordinate.briggingToNative('getCoordinatesAGPSOnly'),
+          statusButton: getCoordinate.statusButton,
+          onTapGoToNav: () async {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const CollectDataPage(),
+              ),
+            );
+          },
         ),
       ],
     );

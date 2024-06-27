@@ -41,6 +41,30 @@ class MainActivity: FlutterActivity() {
                 } catch (e: SecurityException) {
                     result.error("PERMISSION_DENIED", "Location permission denied", null)
                 }
+            } else if (call.method == "getCoordinatesAGPSOnly") {
+                val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                val listener = object : LocationListener {
+                    override fun onLocationChanged(location: Location) {
+                        val coordinates = mapOf(
+                            "latitude" to location.latitude,
+                            "longitude" to location.longitude,
+                            "accuracy" to location.accuracy,
+                        )
+                         result.success(coordinates)
+//                        result.success(location)
+                        locationManager.removeUpdates(this)
+                    }
+
+                    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+                    override fun onProviderEnabled(provider: String) {}
+                    override fun onProviderDisabled(provider: String) {}
+                }
+
+                try {
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, listener)
+                } catch (e: SecurityException) {
+                    result.error("PERMISSION_DENIED", "Location permission denied", null)
+                }
             } else {
                 result.notImplemented()
             }
