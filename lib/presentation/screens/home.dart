@@ -42,11 +42,15 @@ class _HomeState extends State<Home> {
           onTap: () => getCoordinate.getGeolocationStp1(),
           statusButton: getCoordinate.statusButton,
           onTapGoToNav: () async {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const CollectDataPage(),
-              ),
-            );
+            bool getAllDataCollect =
+                await getCoordinate.getDataList('Geolocation');
+            if (getAllDataCollect) {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const CollectDataPage(),
+                ),
+              );
+            }
           },
         ),
         CardLocation(
@@ -56,11 +60,14 @@ class _HomeState extends State<Home> {
           onTap: () => getCoordinate.briggingToNative('getCoordinatesGPSOnly'),
           statusButton: getCoordinate.statusButton,
           onTapGoToNav: () async {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const CollectDataPage(),
-              ),
-            );
+            bool getAllDataCollect = await getCoordinate.getDataList('GPS');
+            if (getAllDataCollect) {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const CollectDataPage(),
+                ),
+              );
+            }
           },
         ),
         CardLocation(
@@ -70,11 +77,14 @@ class _HomeState extends State<Home> {
           onTap: () => getCoordinate.briggingToNative('getCoordinatesAGPSOnly'),
           statusButton: getCoordinate.statusButton,
           onTapGoToNav: () async {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const CollectDataPage(),
-              ),
-            );
+            bool getAllDataCollect = await getCoordinate.getDataList('AGPS');
+            if (getAllDataCollect) {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const CollectDataPage(),
+                ),
+              );
+            }
           },
         ),
       ],

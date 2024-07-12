@@ -11,8 +11,9 @@ class CardLocation extends StatefulWidget {
   final Function onTap;
   final Function onTapGoToNav;
   final bool statusButton;
+  bool hideAllButton;
 
-  const CardLocation({
+  CardLocation({
     super.key,
     required this.librarry,
     required this.description,
@@ -20,6 +21,7 @@ class CardLocation extends StatefulWidget {
     required this.onTap,
     required this.statusButton,
     required this.onTapGoToNav,
+    this.hideAllButton = false,
   });
 
   @override
@@ -89,46 +91,52 @@ class _CardLocationState extends State<CardLocation> {
           wrapUi('Date Time: ', widget.dataCoordinate.dateTime),
           wrapUi('Duration: ', widget.dataCoordinate.durationInSec.toString()),
           wrapUi('Akurasi: ', widget.dataCoordinate.accuracy.toString()),
-          InkWell(
-            onTap: () => widget.statusButton ? widget.onTap() : () {},
-            child: Align(
-              alignment: Alignment.center,
-              child: Container(
-                margin: const EdgeInsets.only(top: 10),
-                padding: const EdgeInsets.all(5),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: widget.statusButton ? Colors.white : Colors.grey,
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(5.0),
+          Visibility(
+            visible: !widget.hideAllButton,
+            child: InkWell(
+              onTap: () => widget.statusButton ? widget.onTap() : () {},
+              child: Align(
+                alignment: Alignment.center,
+                child: Container(
+                  margin: const EdgeInsets.only(top: 10),
+                  padding: const EdgeInsets.all(5),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: widget.statusButton ? Colors.white : Colors.grey,
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(5.0),
+                    ),
                   ),
-                ),
-                child: TextB12Black(
-                  text: 'Get Coordinate',
-                  color: Colors.blue,
-                  align: TextAlign.center,
+                  child: TextB12Black(
+                    text: 'Get Coordinate',
+                    color: Colors.blue,
+                    align: TextAlign.center,
+                  ),
                 ),
               ),
             ),
           ),
-          InkWell(
-            onTap: () => widget.statusButton ? widget.onTapGoToNav() : () {},
-            child: Align(
-              alignment: Alignment.center,
-              child: Container(
-                margin: const EdgeInsets.only(top: 10),
-                padding: const EdgeInsets.all(5),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: widget.statusButton ? Colors.white : Colors.grey,
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(5.0),
+          Visibility(
+            visible: !widget.hideAllButton,
+            child: InkWell(
+              onTap: () => widget.statusButton ? widget.onTapGoToNav() : () {},
+              child: Align(
+                alignment: Alignment.center,
+                child: Container(
+                  margin: const EdgeInsets.only(top: 10),
+                  padding: const EdgeInsets.all(5),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: widget.statusButton ? Colors.white : Colors.grey,
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(5.0),
+                    ),
                   ),
-                ),
-                child: TextB12Black(
-                  text: 'Check Data Collect',
-                  color: Colors.blue,
-                  align: TextAlign.center,
+                  child: TextB12Black(
+                    text: 'Check Data Collect',
+                    color: Colors.blue,
+                    align: TextAlign.center,
+                  ),
                 ),
               ),
             ),

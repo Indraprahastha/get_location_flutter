@@ -17,6 +17,7 @@ class GetCoordinateProvider with ChangeNotifier {
   String _dataTimeStart = '';
   String _dataTimeEnd = '';
   int _duration = 0;
+  List<DataLonLatDate> _dataList = [];
 
   DataLonLatDate get dataGeolocationV1 {
     return _dataGeolocationV1;
@@ -32,6 +33,10 @@ class GetCoordinateProvider with ChangeNotifier {
 
   DataLonLatDate get dataAGPSOnly {
     return _dataAGPSOnly;
+  }
+
+  List get dataList {
+    return _dataList;
   }
 
   void toast(String msg) {
@@ -192,7 +197,52 @@ class GetCoordinateProvider with ChangeNotifier {
     }
   }
 
-  void getDataList() async {
-    try {} catch (e) {}
+  Future getDataList(dataCollect) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    try {
+      switch (dataCollect) {
+        case 'AGPS':
+          var dataAGPSOnly = prefs.getString('dataAGPSOnly') ?? '';
+          List<dynamic> dataAGPSOnlyParse =
+              dataAGPSOnly.isNotEmpty ? json.decode(dataAGPSOnly) : [];
+          List<DataLonLatDate> collectData = [];
+          for (var i = 0; i < dataAGPSOnlyParse.length; i++) {
+            collectData.add(DataLonLatDate.fromJson(dataAGPSOnlyParse[i]));
+          }
+          _dataList = collectData;
+          notifyListeners();
+          return true;
+        case 'GPS':
+          var dataGPSOnly = prefs.getString('dataGPSOnly') ?? '';
+          List<dynamic> dataGPSOnlyParse =
+              dataGPSOnly.isNotEmpty ? json.decode(dataGPSOnly) : [];
+          List<DataLonLatDate> collectData = [];
+          for (var i = 0; i < dataGPSOnlyParse.length; i++) {
+            collectData.add(DataLonLatDate.fromJson(dataGPSOnlyParse[i]));
+          }
+          _dataList = collectData;
+          notifyListeners();
+          return true;
+        case 'Geolocation':
+          var dataGeolocationStp1 =
+              prefs.getString('dataGeolocationStp1') ?? '';
+          List<dynamic> dataGeolocationStp1Parse =
+              dataGeolocationStp1.isNotEmpty
+                  ? json.decode(dataGeolocationStp1)
+                  : [];
+          List<DataLonLatDate> collectData = [];
+          for (var i = 0; i < dataGeolocationStp1Parse.length; i++) {
+            collectData
+                .add(DataLonLatDate.fromJson(dataGeolocationStp1Parse[i]));
+          }
+          _dataList = collectData;
+          notifyListeners();
+          return true;
+        default:
+      }
+    } catch (e) {
+      return false;
+    }
   }
 }
